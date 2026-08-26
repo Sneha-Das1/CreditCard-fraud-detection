@@ -331,14 +331,6 @@ Potential improvements include:
 
 ---
 
-## 👩‍💻 Author
-
-**Sneha Anand Das**
-
-Computer Science & Technology Student
-Interested in Machine Learning, Software Development, and Data Analytics.
-
----
 
 ## 📄 License
 
