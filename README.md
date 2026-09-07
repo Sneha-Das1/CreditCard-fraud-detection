@@ -1,40 +1,52 @@
 # 💳 Credit Card Fraud Detection
 
-A machine learning project for detecting potentially fraudulent credit card transactions using supervised classification algorithms, exploratory data analysis, and techniques for handling highly imbalanced datasets.
+A machine learning project for detecting potentially fraudulent credit card transactions using supervised classification, exploratory data analysis, feature engineering, and techniques for handling highly imbalanced datasets.
 
 ---
 
 ## 📌 Project Overview
 
-Credit card fraud detection is a **binary classification problem** where fraudulent transactions represent only a small portion of the total transactions.
+Credit card fraud detection is a **binary classification problem** where fraudulent transactions represent a small portion of total transactions.
 
-The goal of this project is to build a machine learning pipeline that can distinguish between **legitimate and fraudulent transactions** while focusing on evaluation metrics such as **Precision, Recall, F1-Score, and ROC-AUC**, rather than relying only on accuracy.
+The goal of this project is to build a machine learning pipeline that distinguishes between:
 
-This project covers the complete machine learning workflow:
+- **Legitimate transactions (0)**
+- **Fraudulent transactions (1)**
 
-* Data preprocessing
-* Exploratory Data Analysis (EDA)
-* Feature engineering
-* Class imbalance analysis
-* SMOTE-based oversampling
-* Model training
-* Model evaluation
-* Model comparison
-* Fraud prediction
+The project focuses on handling class imbalance and evaluating models using **Precision, Recall, F1-Score, and Accuracy**, with particular attention to fraud-class recall.
+
+The complete workflow includes:
+
+- Data loading and preprocessing
+- Exploratory Data Analysis (EDA)
+- Outlier analysis and treatment
+- Feature engineering
+- Correlation analysis
+- Class imbalance analysis
+- Train/test splitting
+- Feature scaling
+- SMOTE-based oversampling
+- Model training
+- Model evaluation
+- Model comparison
+- Model serialization
+- Fraud prediction using Streamlit
 
 ---
 
 ## 🎯 Objectives
 
-* Analyze and understand credit card transaction data.
-* Perform data cleaning and preprocessing.
-* Conduct exploratory data analysis.
-* Identify patterns and characteristics of fraudulent transactions.
-* Analyze the distribution of legitimate and fraudulent transactions.
-* Handle class imbalance using **SMOTE**.
-* Train multiple classification models.
-* Compare models using relevant evaluation metrics.
-* Identify an effective model for fraud detection.
+- Analyze and understand credit card transaction data.
+- Perform data cleaning and preprocessing.
+- Conduct exploratory data analysis.
+- Identify patterns associated with fraudulent transactions.
+- Analyze legitimate vs. fraudulent transaction distribution.
+- Engineer additional transaction-level features.
+- Handle class imbalance using **SMOTE**.
+- Train multiple classification models.
+- Compare model performance using relevant classification metrics.
+- Select an effective model for fraud detection.
+- Deploy the trained model for transaction prediction.
 
 ---
 
@@ -42,300 +54,132 @@ This project covers the complete machine learning workflow:
 
 ### Programming Language
 
-* Python
+- Python
 
 ### Data Analysis
 
-* Pandas
-* NumPy
+- Pandas
+- NumPy
 
 ### Data Visualization
 
-* Matplotlib
-* Seaborn
+- Matplotlib
+- Seaborn
 
 ### Machine Learning
 
-* Scikit-learn
-* Imbalanced-learn
+- Scikit-learn
+- Imbalanced-learn
+
+### Model Persistence
+
+- Joblib
 
 ### Development Environment
 
-* Jupyter Notebook
-* VS Code
+- Jupyter Notebook
+- VS Code
 
 ### Deployment / Application
 
-* Streamlit
+- Streamlit
 
 ---
 
 ## 📊 Dataset
 
-The project uses transaction-level credit card data containing features related to individual transactions.
+The project uses a transaction-level credit card dataset containing **1,000,000 transactions** and behavioral features related to individual transactions.
 
-The target variable represents whether a transaction is:
+### Features
 
-* **0 → Legitimate transaction**
-* **1 → Fraudulent transaction**
+| Feature | Description |
+|---|---|
+| `distance_from_home` | Distance of the transaction from the customer's home |
+| `distance_from_last_transaction` | Distance from the previous transaction |
+| `ratio_to_median_purchase_price` | Ratio of transaction amount to median purchase price |
+| `repeat_retailer` | Whether the transaction occurred at a repeat retailer |
+| `used_chip` | Whether a chip was used |
+| `used_pin_number` | Whether a PIN was used |
+| `online_order` | Whether the transaction was an online order |
+| `fraud` | Target variable |
 
-Fraud detection datasets are typically highly imbalanced, with legitimate transactions significantly outnumbering fraudulent ones. Therefore, special attention is given to the minority fraud class during preprocessing and evaluation.
+### Target Variable
+
+- `0` → Legitimate transaction
+- `1` → Fraudulent transaction
+
+The dataset contains approximately **8.74% fraudulent transactions**, making class imbalance an important consideration during model training and evaluation.
 
 ---
 
 ## 🔍 Exploratory Data Analysis
 
-Exploratory Data Analysis was performed to understand:
+EDA was performed to understand the structure and characteristics of the transaction data.
 
-* Distribution of fraudulent vs. legitimate transactions
-* Feature distributions
-* Correlations between variables
-* Potential outliers
-* Patterns associated with fraudulent transactions
+The analysis included:
 
-### Correlation Heatmap
+- Missing-value analysis
+- Data-type validation
+- Descriptive statistics
+- Feature distributions
+- Class distribution analysis
+- Correlation analysis
+- Outlier detection
+
+### Data Quality
+
+All features were checked for missing values, and no missing values were found in the dataset.
+
+### Correlation Analysis
+
+Correlation analysis showed that `ratio_to_median_purchase_price` had the strongest positive correlation with fraud among the available features, followed by `online_order` and `distance_from_home`.
 
 ![Correlation Heatmap](CORRHEAT.png)
 
 ### Class Distribution
 
+The dataset is highly imbalanced, with legitimate transactions significantly outnumbering fraudulent transactions.
+
 ![Class Distribution](class%20distribution.png)
 
-### Fraud Outliers
+### Outlier Analysis
+
+Boxplots were used to identify potential outliers in numerical transaction features.
 
 ![Fraud Outliers](fraud%20outliers.png)
 
 ---
 
-## 🔄 Machine Learning Workflow
+## 🧹 Data Preprocessing
 
-```text
-Raw Dataset
-     ↓
-Data Loading
-     ↓
-Data Cleaning & Preprocessing
-     ↓
-Exploratory Data Analysis
-     ↓
-Feature Engineering
-     ↓
-Class Imbalance Analysis
-     ↓
-SMOTE
-     ↓
-Train/Test Split
-     ↓
-Model Training
-     ↓
-Model Evaluation
-     ↓
-Model Comparison
-     ↓
-Fraud Prediction
-```
+The following preprocessing steps were performed:
+
+1. Loaded the dataset using Pandas.
+2. Checked for missing values.
+3. Verified feature data types.
+4. Analyzed descriptive statistics.
+5. Identified potential outliers.
+6. Applied IQR-based outlier capping to selected numerical features.
+7. Separated features and target variable.
+8. Split the data into training and testing sets.
+9. Applied StandardScaler to numerical/model input features.
+
+### Outlier Treatment
+
+IQR-based capping was applied to:
+
+- `distance_from_home`
+- `distance_from_last_transaction`
+- `ratio_to_median_purchase_price`
 
 ---
 
-## ⚖️ Handling Class Imbalance
+## ⚙️ Feature Engineering
 
-One of the major challenges in credit card fraud detection is **class imbalance**.
+Additional transaction-level features were created to provide the models with more behavioral information.
 
-Since fraudulent transactions form a small percentage of the dataset, a model can achieve high accuracy simply by predicting most transactions as legitimate.
+### 1. Home-to-Last-Transaction Ratio
 
-To address this issue, the project uses **SMOTE (Synthetic Minority Over-sampling Technique)** to generate synthetic samples for the minority fraud class.
-
-This helps the models learn patterns associated with fraudulent transactions more effectively.
-
----
-
-## 🤖 Machine Learning Models
-
-The project experiments with multiple classification algorithms.
-
-### 1. Logistic Regression
-
-Used as a baseline classification model for distinguishing between fraudulent and legitimate transactions.
-
-### 2. Decision Tree
-
-Used to capture non-linear relationships between transaction features and fraud classification.
-
-### 3. Random Forest
-
-An ensemble learning algorithm that combines multiple decision trees to improve classification performance and robustness.
-
----
-
-## 📈 Model Evaluation
-
-Because fraud detection is an imbalanced classification problem, model performance is evaluated using multiple metrics.
-
-### Precision
-
-Measures how many transactions predicted as fraudulent were actually fraudulent.
-
-### Recall
-
-Measures how many actual fraudulent transactions were correctly identified.
-
-### F1-Score
-
-Provides a balance between Precision and Recall.
-
-### ROC-AUC
-
-Measures the model's ability to distinguish between fraudulent and legitimate transactions across different classification thresholds.
-
-### Accuracy
-
-Also considered, but it is **not used as the only performance metric** because of the highly imbalanced nature of fraud datasets.
-
----
-
-## 📋 Project Structure
-
-```text
-Credit-card-fraud-detection/
-│
-├── app.py
-├── CC_fraud.ipynb
-├── card_transdata.csv
-│
-├── model.pkl
-├── scaler.pkl
-│
-├── CORRHEAT.png
-├── class distribution.png
-├── fraud outliers.png
-│
-├── requirements.txt
-├── README.md
-├── CONTRIBUTING.md
-├── LICENSE
-└── Tests
-```
-
----
-
-## 🚀 Installation
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/Sneha-Das1/CreditCard-fraud-detection.git
-```
-
-### 2. Navigate to the project directory
-
-```bash
-cd CreditCard-fraud-detection
-```
-
-### 3. Create a virtual environment
-
-```bash
-python -m venv .venv
-```
-
-### 4. Activate the virtual environment
-
-**Windows:**
-
-```powershell
-.venv\Scripts\activate
-```
-
-**macOS/Linux:**
-
-```bash
-source .venv/bin/activate
-```
-
-### 5. Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
-## ▶️ Running the Project
-
-### Jupyter Notebook
-
-Launch Jupyter Notebook:
-
-```bash
-jupyter notebook
-```
-
-Open:
-
-```text
-CC_fraud.ipynb
-```
-
-and run the cells to reproduce the analysis and model training workflow.
-
-### Streamlit Application
-
-To run the prediction application:
-
-```bash
-streamlit run app.py
-```
-
-The application allows users to provide transaction information and obtain a fraud prediction from the trained machine learning model.
-
----
-
-## 💾 Saved Models
-
-The trained machine learning pipeline includes:
-
-* `model.pkl` — trained classification model
-* `scaler.pkl` — feature scaling object
-
-These files allow the application to use the trained model for predictions without retraining it every time.
-
----
-
-## 📊 Results
-
-The models are compared using:
-
-| Model               | Accuracy | Precision | Recall | F1-Score | ROC-AUC |
-| ------------------- | -------: | --------: | -----: | -------: | ------: |
-| Logistic Regression |        — |         — |      — |        — |       — |
-| Decision Tree       |        — |         — |      — |        — |       — |
-| Random Forest       |        — |         — |      — |        — |       — |
-
-> **Note:** Replace the values above with the final evaluation results from `CC_fraud.ipynb`.
-
-For fraud detection, the preferred model should not necessarily be the one with the highest accuracy. **Recall, Precision, F1-Score, and ROC-AUC** are particularly important when evaluating the ability to identify fraudulent transactions.
-
----
-
-## 🔮 Future Improvements
-
-Potential improvements include:
-
-* Hyperparameter tuning using GridSearchCV or RandomizedSearchCV.
-* Testing additional algorithms such as XGBoost and LightGBM.
-* Threshold optimization for improving fraud recall.
-* Real-time transaction monitoring.
-* Model explainability using SHAP or LIME.
-* Deployment using Streamlit Cloud or another cloud platform.
-* Continuous model retraining using new transaction data.
-
----
-
-
-## 📄 License
-
-This project is licensed under the terms specified in the `LICENSE` file.
-
----
-
-⭐ If you find this project useful, consider giving the repository a star!
+```python
+home_to_last_ratio =
+distance_from_home / (distance_from_last_transaction + 1e-5)
